@@ -7,7 +7,7 @@ import random
 
 # Load TFLite model for inference (rock-paper-scissors model)
 interpreter = tf.lite.Interpreter(model_path='https://drive.google.com/file/d/1o074xQK6h5zSeARdrtfrvcgivI5bnEZF/view?usp=drive_link') #Change path
-interpre+96ter.allocate_tensors()
+interpreter.allocate_tensors()
 
 # Get input and output details
 input_details = interpreter.get_input_details()
