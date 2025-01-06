@@ -15,7 +15,7 @@ model_path = 'model.tflite'
 gdown.download(model_url, model_path, quiet=False)
 
 # Load the model
-interpreter = tf.lite.Interpreter(model_path=model_path)
+interpreter = tf.lite.Interpreter(model_path="model.tflite")
 interpreter.allocate_tensors()
 
 # Get input and output details
