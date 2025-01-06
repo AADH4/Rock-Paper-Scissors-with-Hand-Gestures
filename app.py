@@ -4,8 +4,18 @@ import numpy as np
 from PIL import Image
 import random
 
-# Load TFLite model for inference (rock-paper-scissors model)
-interpreter = tf.lite.Interpreter(model_path='https://drive.google.com/file/d/1o074xQK6h5zSeARdrtfrvcgivI5bnEZF/view?usp=drive_link') #Change path
+import gdown
+import tensorflow as tf
+
+# URL to the model file on Google Drive
+model_url = 'https://drive.google.com/file/d/1o074xQK6h5zSeARdrtfrvcgivI5bnEZF/view?usp=drive_link'
+
+# Download the model from Google Drive
+model_path = 'model.tflite'
+gdown.download(model_url, model_path, quiet=False)
+
+# Load the model
+interpreter = tf.lite.Interpreter(model_path=model_path)
 interpreter.allocate_tensors()
 
 # Get input and output details
