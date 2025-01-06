@@ -3,17 +3,12 @@ import streamlit as st
 import numpy as np
 from PIL import Image
 import random
-
-import gdown
-import tensorflow as tf
-
 import gdown
 
 # Download the file from Google Drive (replace with the correct file ID)
 url = "https://drive.google.com/uc?export=download&id=1o074xQK6h5zSeARdrtfrvcgivI5bnEZF"
 output = "model.tflite"
 gdown.download(url, output, quiet=False)
-
 
 # Load the model
 interpreter = tf.lite.Interpreter(model_path="model.tflite")
@@ -65,43 +60,44 @@ if uploaded_image is not None:
     image_resized = image_resized.convert('RGB')  # Ensure the image is in RGB format
     image_array = np.array(image_resized) / 255.0  # Normalize to 0-1 range
 
-    # Prepare the image for model inference
+    # Ensure it has 3 channels (RGB) and reshape it to (224, 224, 3)
+    if image_array.shape != (224, 224, 3):
+        image_array = np.stack([image_array] * 3, axis=-1)  # Handle grayscale images
+
+    # Add batch dimension (1, 224, 224, 3)
+    image_array = np.expand_dims(image_array, axis=0)
+
+    # Ensure the image is of type float32
     image_array = image_array.astype(np.float32)
-    image_array = np.expand_dims(image_array, axis=0)  # Add batch dimension
 
-    # Ensure the image has the correct shape (1, 224, 224, 3)
-    expected_shape = (1, 224, 224, 3)
-    if image_array.shape != expected_shape:
-        st.error(f"Expected shape {expected_shape}, but got {image_array.shape}.")
-    else:
-        # Display a spinner while the model is processing
-        with st.spinner("Classifying the image... Please wait."):
-            try:
-                # Set the tensor and invoke the model
-                interpreter.set_tensor(input_details[0]['index'], image_array)
-                interpreter.invoke()
+    # Now, pass the image_array to the model
+    with st.spinner("Classifying the image... Please wait."):
+        try:
+            # Set the tensor and invoke the model
+            interpreter.set_tensor(input_details[0]['index'], image_array)
+            interpreter.invoke()
 
-                # Get the model's raw output (probabilities for rock, paper, and scissors)
-                output = interpreter.get_tensor(output_details[0]['index'])
+            # Get the model's raw output (probabilities for rock, paper, and scissors)
+            output = interpreter.get_tensor(output_details[0]['index'])
 
-                # Get the predicted class (rock, paper, or scissors)
-                predicted_class_index = np.argmax(output)  # Index of the maximum probability
-                class_labels = ['Rock', 'Paper', 'Scissors']
-                user_move = class_labels[predicted_class_index]
+            # Get the predicted class (rock, paper, or scissors)
+            predicted_class_index = np.argmax(output)  # Index of the maximum probability
+            class_labels = ['Rock', 'Paper', 'Scissors']
+            user_move = class_labels[predicted_class_index]
 
-                # Display user's move
-                st.success(f"Your move: **{user_move}**")
+            # Display user's move
+            st.success(f"Your move: **{user_move}**")
 
-                # Get computer's move
-                computer_move = get_computer_move()
-                st.info(f"Computer's move: **{computer_move}**")
+            # Get computer's move
+            computer_move = get_computer_move()
+            st.info(f"Computer's move: **{computer_move}**")
 
-                # Determine the winner
-                result = determine_winner(user_move, computer_move)
-                st.success(result)
+            # Determine the winner
+            result = determine_winner(user_move, computer_move)
+            st.success(result)
 
-            except Exception as e:
-                st.error(f"Error during inference: {e}")
+        except Exception as e:
+            st.error(f"Error during inference: {e}")
 else:
     st.info("Please upload an image to play the game.")
 
