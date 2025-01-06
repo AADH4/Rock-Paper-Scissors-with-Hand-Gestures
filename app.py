@@ -6,7 +6,7 @@ from PIL import Image
 import random
 
 # Load TFLite model for inference (rock-paper-scissors model)
-interpreter = tf.lite.Interpreter(model_path='/content/rps_game_model.tflite') #Change path
+interpreter = tf.lite.Interpreter(model_path='https://drive.google.com/file/d/1o074xQK6h5zSeARdrtfrvcgivI5bnEZF/view?usp=drive_link') #Change path
 interpre+96ter.allocate_tensors()
 
 # Get input and output details
