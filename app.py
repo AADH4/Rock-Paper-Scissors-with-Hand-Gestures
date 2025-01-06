@@ -7,12 +7,13 @@ import random
 import gdown
 import tensorflow as tf
 
-# URL to the model file on Google Drive
-model_url = 'https://drive.google.com/file/d/1o074xQK6h5zSeARdrtfrvcgivI5bnEZF/view?usp=drive_link'
+import gdown
 
-# Download the model from Google Drive
-model_path = 'model.tflite'
-gdown.download(model_url, model_path, quiet=False)
+# Download the file from Google Drive (replace with the correct file ID)
+url = "https://drive.google.com/uc?export=download&id=1o074xQK6h5zSeARdrtfrvcgivI5bnEZF"
+output = "model.tflite"
+gdown.download(url, output, quiet=False)
+
 
 # Load the model
 interpreter = tf.lite.Interpreter(model_path="model.tflite")
